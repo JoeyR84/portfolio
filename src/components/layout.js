@@ -2,10 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
-import Nav from './Nav'
+import styled from 'react-emotion'
+
 import Header from './header'
 
-const Layout = ({ children }) => (
+const Layout = ({ children, location }) => (
   <div>
     <StaticQuery
       query={graphql`
@@ -15,10 +16,15 @@ const Layout = ({ children }) => (
               title
             }
           }
+          image: imageSharp(original: { src: { regex: "/darkeysSmall/" } }) {
+            sizes(maxWidth: 1240, grayscale: true) {
+              ...GatsbyImageSharpSizes
+            }
+          }
         }
       `}
       render={data => (
-        <>
+        <Container>
           <Helmet
             title={data.site.siteMetadata.title}
             meta={[
@@ -28,19 +34,13 @@ const Layout = ({ children }) => (
           >
             <html lang="en" />
           </Helmet>
-          <Nav />
-          <Header siteTitle={data.site.siteMetadata.title} />
-          <div
-            style={{
-              margin: '0 auto',
-              maxWidth: 960,
-              padding: '0px 1.0875rem 1.45rem',
-              paddingTop: 0,
-            }}
-          >
-            {children}
-          </div>
-        </>
+          <Header
+            siteTitle={data.site.siteMetadata.title}
+            image={data.image}
+            location={location}
+          />
+          <div>{children}</div>
+        </Container>
       )}
     />
   </div>
@@ -49,5 +49,7 @@ const Layout = ({ children }) => (
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
 }
+
+const Container = styled('div')``
 
 export default Layout
